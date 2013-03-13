@@ -31,14 +31,17 @@ class ConsoleHandler(Protocol):
         self.last_log = ConsoleHandler.LS_NONE
         knownargs, _, _, _ = inspect.getargspec(serialport.SerialPort.__init__)
 
-        self.serial_port = serialport.SerialPort(self,
-                                port_name,
-                                reactor,
-                                **dict((k, v) for k, v in kwargs.iteritems() if k in knownargs)
-                                )
+        self.serial_port = \
+            serialport.SerialPort(self,
+                                  port_name,
+                                  reactor,
+                                  **dict((k, v) for k, v in kwargs.iteritems() if k in knownargs)
+                                  )
 
     def close(self):
         self.serial_port.close()
+        if self.sshport:
+            self.listener.stopListening()
 
     def write_log(self, log_type, data):
         if not self.log_file:

@@ -14,5 +14,4 @@ def console_server(consoles=None):
         consoles.open_all()
 
     # create listening ssh session with cli
-    ts_factory = TSFactory(consoles)
-    reactor.listenTCP(config.server().get("sshport", 8022), ts_factory)
+    reactor.listenTCP(config.server().get("sshport", 8022), TSFactory(consoles))

@@ -7,8 +7,11 @@ import logging
 _log = logging.getLogger(__name__)
 import os.path
 
+from twisted.internet import reactor
+
 import config
 from consolehandler import ConsoleHandler
+from ssh import TSFactory
 
 
 class ConsoleCollection(dict):
@@ -16,6 +19,9 @@ class ConsoleCollection(dict):
         if port_name in self:
             raise ValueError('port %s already open' % port_name)
         self[port_name] = ConsoleHandler(port_name, closed_callback=self.closed, **config)
+        # start an ssh listener for this port
+        if self[port_name].sshport:
+            self[port_name].listener = reactor.listenTCP(self[port_name].sshport, TSFactory(self))
 
     def closed(self, closed_port):
         for port_name, port in self.items():
