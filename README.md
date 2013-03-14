@@ -9,3 +9,17 @@ solution can be acheived using a raspberry pi and readily available usb to seria
 e.g. this 16 port one for under £200
 http://www.easysync-ltd.com/product/636/usb2-h-1016-m.html
 
+Issues with USB hot plug
+------------------------
+On ubuntu modem-manager is run against all serial ports to probe for it being a modem, 
+this interferes with the monitored console collection. You may want to add a blacklist udev
+rule to prevent this. 99-usb-blacklist.rules is a sample rule file and goes into /etc/udev/rules.d
+
+Group membership
+----------------
+By default serial devices belong to the dialout group so the user running the console server needs to 
+be a member of this group or to run as root.
+
+Unit Tests
+----------
+Most of the code is unit tested.

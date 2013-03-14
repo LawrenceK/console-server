@@ -24,7 +24,7 @@ stopbits = 1
 timeout = 0
 xonxoff = 0
 rtscts = 0
-sshport = 8022
+sshport = 8023
 
 [/dev/ttyUSB1]
 baudrate = 9600
@@ -34,7 +34,7 @@ stopbits = 1
 timeout = 0
 xonxoff = 0
 rtscts = 0
-sshport = 8023
+sshport = 8024
 """
 
 
@@ -48,65 +48,82 @@ class TestConsoleCollection(unittest.TestCase):
 
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_create(self):
-        collection = ConsoleCollection()
-        self.assertEqual(0, len(collection))
+        listenTCP = Dingus()
+        with patch('twisted.internet.reactor.listenTCP', Dingus(return_value=listenTCP)):
+            collection = ConsoleCollection()
+            self.assertEqual(0, len(collection))
 
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_open_port(self):
-        config.set_config(StringIO(test_config))
-        collection = ConsoleCollection()
-        collection.open_port('/dev/ttyUSB0', config.get_by_name('/dev/ttyUSB0'))
+        listenTCP = Dingus()
+        with patch('twisted.internet.reactor.listenTCP', listenTCP):
+            config.set_config(StringIO(test_config))
+            collection = ConsoleCollection()
+            collection.open_port(config.get_by_name('/dev/ttyUSB0'))
+            self.assertEqual(1, len(listenTCP.calls))
 
-        self.assertEqual(1, len(collection))
-        ch = collection.find_by_name('/dev/ttyUSB0')
-        self.assertIsInstance(ch, ConsoleHandler)
+            self.assertEqual(1, len(collection))
+            ch = collection.find_by_name('/dev/ttyUSB0')
+            self.assertIsInstance(ch, ConsoleHandler)
 
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_find_by_name(self):
-        config.set_config(StringIO(test_config))
-        collection = ConsoleCollection()
-        collection.open_port('/dev/ttyUSB0', config.get_by_name('/dev/ttyUSB0'))
+        listenTCP = Dingus()
+        with patch('twisted.internet.reactor.listenTCP', listenTCP):
+            config.set_config(StringIO(test_config))
+            collection = ConsoleCollection()
+            collection.open_port(config.get_by_name('/dev/ttyUSB0'))
+            self.assertEqual(1, len(listenTCP.calls))
 
-        self.assertEqual(1, len(collection))
-        ch = collection.find_by_name('/dev/ttyUSB0')
-        self.assertIsInstance(ch, ConsoleHandler)
-        ch = collection.find_by_name('/dev/ttyUSB1')
-        self.assertEqual(None, ch)
+            self.assertEqual(1, len(collection))
+            ch = collection.find_by_name('/dev/ttyUSB0')
+            self.assertIsInstance(ch, ConsoleHandler)
+            ch = collection.find_by_name('/dev/ttyUSB1')
+            self.assertEqual(None, ch)
 
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_find_by_port(self):
-        config.set_config(StringIO(test_config))
-        _log.debug("config %s", config.config)
-        collection = ConsoleCollection()
-        collection.open_port('/dev/ttyUSB0', config.get_by_name('/dev/ttyUSB0'))
+        listenTCP = Dingus()
+        with patch('twisted.internet.reactor.listenTCP', listenTCP):
+            config.set_config(StringIO(test_config))
+            _log.debug("config %s", config.config)
+            collection = ConsoleCollection()
+            collection.open_port(config.get_by_name('/dev/ttyUSB0'))
+            self.assertEqual(1, len(listenTCP.calls))
 
-        self.assertEqual(1, len(collection))
-        ch = collection.find_by_port(8022)
-        self.assertIsInstance(ch, ConsoleHandler)
-        ch = collection.find_by_port(8023)
-        self.assertEqual(None, ch)
+            self.assertEqual(1, len(collection))
+            ch = collection.find_by_port(8023)
+            self.assertIsInstance(ch, ConsoleHandler)
+            ch = collection.find_by_port(8024)
+            self.assertEqual(None, ch)
 
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_close_port(self):
-        config.set_config(StringIO(test_config))
-        collection = ConsoleCollection()
-        collection.open_port('/dev/ttyUSB0', config.get_by_name('/dev/ttyUSB0'))
+        listenTCP = Dingus()
+        with patch('twisted.internet.reactor.listenTCP', listenTCP):
+            config.set_config(StringIO(test_config))
+            collection = ConsoleCollection()
+            collection.open_port(config.get_by_name('/dev/ttyUSB0'))
+            self.assertEqual(1, len(listenTCP.calls))
 
-        self.assertEqual(1, len(collection))
-        collection.close_port('/dev/ttyUSB0')
-        #TODO test invalid key
+            self.assertEqual(1, len(collection))
+            collection.close_port('/dev/ttyUSB0')
+            #TODO test invalid key
 
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_closed(self):
-        config.set_config(StringIO(test_config))
-        collection = ConsoleCollection()
-        collection.open_port('/dev/ttyUSB0', config.get_by_name('/dev/ttyUSB0'))
+        listenTCP = Dingus()
+        with patch('twisted.internet.reactor.listenTCP', listenTCP):
+            config.set_config(StringIO(test_config))
+            collection = ConsoleCollection()
+            collection.open_port(config.get_by_name('/dev/ttyUSB0'))
+            self.assertEqual(1, len(listenTCP.calls))
 
-        ch = collection.find_by_name('/dev/ttyUSB0')
-        self.assertIsInstance(ch, ConsoleHandler)
+            ch = collection.find_by_name('/dev/ttyUSB0')
+            self.assertIsInstance(ch, ConsoleHandler)
 
-        self.assertEqual(1, len(collection))
-        collection.closed(ch)
-        self.assertEqual(0, len(collection))
+            self.assertEqual(1, len(collection))
+            collection.closed(ch)
+            self.assertEqual(0, len(collection))
 
 #    def closed(self, closed_port):

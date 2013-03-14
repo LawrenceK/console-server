@@ -37,12 +37,21 @@ class TSProtocol(protocol.Protocol):
         _log.debug("data_callback %s", data)
         self.transport.write(data)
 
-    def connectionMade(self):
-        listen_port = self.transport.getHost().address.port
-        self.ch = self.transport.session.conn.transport.factory.consolecollection.find_by_port(listen_port)
+    def do_attach(self, ch):
+        if not ch or ch.is_attached:
+            return False
+        self.ch = ch
+        self.ch.attach(self.data_callback)
+        return True
+
+    def connectionLost(self):
         if self.ch:
-            self.ch.data_callback = self.data_callback
-        else:
+            self.ch.detach()
+        self.ch = None
+
+    def connectionMade(self):
+        # Is this a ssh session on a port for direct connection
+        if not self.do_attach(self.consolecollection.find_by_port(self.transport.getHost().address.port)):
             _log.debug("Running in CLI mode")
             self.send_cli_prompt()
 
@@ -62,11 +71,11 @@ class TSProtocol(protocol.Protocol):
 
     def process_connect(self, cfg):
         """look for connect request and validate, if we know the port then go into rawmode"""
-        self.ch = self.consolecollection.find_by_name(cfg.name)
-        if self.ch:
-            self.ch.data_callback = self.data_callback
-        else:
+        ch = self.consolecollection.find_by_name(cfg.name)
+        if not ch:
             return["Cannot find console %s" % cfg.name, ]
+        elif not self.do_attach(ch):
+            return["Console already in use %s" % cfg.name, ]
 
     def process_baud(self, cfg, baudrate):
         cfg['baudrate'] = baudrate

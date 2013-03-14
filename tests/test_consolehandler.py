@@ -1,12 +1,14 @@
-import sys, os, os.path
+import os
+import os.path
 import logging
+_log = logging.getLogger(__name__)
 
 import unittest
 import consolehandler
 
 from dingus import patch
 
-#
+
 class TestConsoleHandler(unittest.TestCase):
 
     def setUp(self):
@@ -19,20 +21,19 @@ class TestConsoleHandler(unittest.TestCase):
     def test_create(self):
         logfile_name = 'test_port.log'
         config = dict(port='test_port',
-                logfile=logfile_name,
-                baudrate=9600, 
-    #            bytesize=serialport.EIGHTBITS, 
-    #            parity=serialport.PARITY_NONE, 
-    #            stopbits=serialport.STOPBITS_ONE, 
-    #            timeout=0, 
-    #            xonxoff=0, 
-    #            rtscts=0
-        )
+                      logfile=logfile_name,
+                      baudrate=9600,
+                      # bytesize=serialport.EIGHTBITS,
+                      # parity=serialport.PARITY_NONE,
+                      # stopbits=serialport.STOPBITS_ONE,
+                      # timeout=0,
+                      # xonxoff=0,
+                      # rtscts=0
+                      )
         if os.path.exists(logfile_name):
             os.remove(logfile_name)
 
         c = consolehandler.ConsoleHandler(config['port'], **config)
-        print c.serial_port
 
         c.connectionMade()
 

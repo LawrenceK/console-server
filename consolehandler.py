@@ -25,7 +25,7 @@ class ConsoleHandler(Protocol):
         _log.debug("Config %s: %s", port_name, kwargs)
         self.sshport = kwargs.pop('sshport', None)
         self.closed_callback = closed_callback
-        self.data_callback = data_callback
+        self._data_callback = data_callback
         self.log_file = None
         self.logfile_name = os.path.abspath(kwargs.pop('logfile', os.path.basename(port_name)))
         self.last_log = ConsoleHandler.LS_NONE
@@ -38,8 +38,21 @@ class ConsoleHandler(Protocol):
                                   **dict((k, v) for k, v in kwargs.iteritems() if k in knownargs)
                                   )
 
+    @property
+    def is_attached(self):
+        return self._data_callback is not None
+
+    def attach(self, data_callback):
+        self._data_callback = data_callback
+
+    def detach(self):
+        self._data_callback = None
+
     def close(self):
-        self.serial_port.close()
+        _log.debug("close")
+        if self.serial_port:
+            self.serial_port.loseConnection()
+            self.serial_port = None
         if self.sshport:
             self.listener.stopListening()
 
@@ -65,6 +78,7 @@ class ConsoleHandler(Protocol):
             self.log_file.close()
         if self.closed_callback:
             self.closed_callback(self)
+        self.close()
 
     def connectionMade(self):
         _log.debug("connectionMade")
@@ -75,5 +89,5 @@ class ConsoleHandler(Protocol):
         # are we connected to telnet
         # send data
         self.write_log(ConsoleHandler.LS_READ, data)
-        if self.data_callback:
-            self.data_callback(data)
+        if self._data_callback:
+            self._data_callback(data)

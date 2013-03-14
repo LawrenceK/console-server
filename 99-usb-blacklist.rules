@@ -1,0 +1,9 @@
+ACTION!="add|change", GOTO="mm_usb_blacklist_end"
+SUBSYSTEM!="usb", GOTO="mm_usb_blacklist_end"
+ENV{DEVTYPE}!="usb_device",  GOTO="mm_usb_blacklist_end"
+
+
+#ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", ATTRS{serial}=="A4014O5N", ENV{ID_MM_DEVICE_IGNORE}="1"
+ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", ENV{ID_MM_DEVICE_IGNORE}="1"
+
+LABEL="mm_usb_blacklist_end"

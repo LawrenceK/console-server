@@ -21,7 +21,7 @@ stopbits = 1
 timeout = 0
 xonxoff = 0
 rtscts = 0
-sshport = 8022
+sshport = 8023
 
 [/dev/ttyUSB1]
 baudrate = 9600
@@ -31,7 +31,7 @@ stopbits = 1
 timeout = 0
 xonxoff = 0
 rtscts = 0
-sshport = 8023
+sshport = 8024
 """
 
 
@@ -40,6 +40,7 @@ class TestTsProtocol(unittest.TestCase):
     def setUp(self):
         self.tsprotocol = TSProtocol()
         self.tsprotocol.transport = Dingus()
+        self.tsprotocol.transport.session.conn.transport.factory.consolecollection = Dingus()
 
     def tearDown(self):
         pass
@@ -120,6 +121,9 @@ class TestTsProtocol(unittest.TestCase):
 
     def test_connect(self):
         config.set_config(StringIO(test_config))
+        #TODO dingus so we get a ch taht is not attached
+        self.tsprotocol.transport.session.conn.transport.factory.consolecollection = \
+            Dingus(find_by_name__returns=Dingus(is_attached=False))
         result = self.tsprotocol.process("connect /dev/ttyUSB0")
         self.failUnless(result is None)
         self.failUnless(self.tsprotocol.ch is not None)
@@ -138,8 +142,8 @@ class TestTsProtocol(unittest.TestCase):
         # test that a new protocol handler started on the global port is in
         # line mode.
         self.tsprotocol.dataReceived('show /dev/ttyUSB0\r\n')
-        # 8 lines from show, 8 line terms, and one cli prompt
-        self.assertEqual(17, len(self.tsprotocol.transport.write.calls))
+        # Echo of command, 8 lines from show, 8 line terms, and one cli prompt
+        self.assertEqual(18, len(self.tsprotocol.transport.write.calls))
 
 #    @patch('ssh_protocol.TSProtocol.sendLine')
     def test_raw_mode(self):

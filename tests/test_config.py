@@ -20,7 +20,7 @@ stopbits = 1
 timeout = 0
 xonxoff = 0
 rtscts = 1
-sshport = 8022
+sshport = 8023
 
 [/dev/ttyUSB1]
 baudrate = 9600
@@ -30,7 +30,7 @@ stopbits = 1
 timeout = 0
 xonxoff = 1
 rtscts = 0
-sshport = 8023
+sshport = 8024
 """
 
 

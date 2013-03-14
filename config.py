@@ -30,6 +30,7 @@ config = None
 configspec = """[GLOBAL]
 sshport = integer()
 portbase = integer()
+opendelay = integer()
 
 [__many__]
 baudrate = integer()
@@ -76,7 +77,7 @@ def get_by_name(port_name):
 
 
 def get_names_from_port(port_nr):
-    return [k for k, v in config.iteritems() if k != "GLOBAL" and "ssh"in v and v['ssh'] == port_nr]
+    return [k for k, v in config.iteritems() if k != "GLOBAL" and "sshport"in v and v['sshport'] == port_nr]
 
 
 def get_port_names():

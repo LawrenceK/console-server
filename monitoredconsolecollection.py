@@ -8,6 +8,7 @@ import logging
 _log = logging.getLogger(__name__)
 
 from twisted.python.filepath import FilePath
+from twisted.internet import reactor
 from twisted.internet.inotify import IN_CREATE, INotify
 
 from consolecollection import ConsoleCollection
@@ -24,6 +25,10 @@ class MonitoredConsoleCollection(ConsoleCollection):
 
     def created(self, ignored, path, mask):
         _log.info("New entry created %s", path.path)
-        cf = config.get_by_name(path.path)
-        if cf:
-            self.open_port(cf.name, cf)
+        if path.path not in self:
+            cf = config.get_by_name(path.path)
+            if cf:
+                # this gets called before the udev rules have run and set the group
+                # ownership of the port on usb hot plug. so delay the open attempt
+#                self.open_port(cf)
+                reactor.callLater(config.server().get("opendelay", 2), self.open_port, cf)
