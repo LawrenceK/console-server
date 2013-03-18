@@ -19,9 +19,6 @@ class ConsoleCollection(dict):
         if config.name in self:
             raise ValueError('port %s already open' % config.name)
         try:
-            stat_info = os.stat(config.name)
-            _log.debug("port belongs to %s:%s %x", stat_info.st_uid, stat_info.st_gid, stat_info.st_mode)
-
             self[config.name] = ConsoleHandler(config.name, closed_callback=self.closed, **config)
             # start an ssh listener for this port
             if self[config.name].sshport:

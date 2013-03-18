@@ -13,6 +13,11 @@ setup(
     package_data={
         '': ['*.ini'],
     },
+    entry_points={
+        'console_scripts': [
+            'consoleserver = consoleserver.main:main',
+        ]
+    },
 
     # metadata for upload to PyPI
     author="Lawrence P. Klyne",

@@ -30,6 +30,9 @@ class TestMonitoredConsoleCollection(unittest.TestCase):
         def callback(port_name):
             new_ports.append(port_name)
 
+# need to mock/patch this
+# reactor.callLater(config.server().get("opendelay", 2), self.open_port, cf)
+
         # patch so we know the notifier
         inotify = Dingus()
         with patch('monitoredconsolecollection.INotify', Dingus(return_value=inotify)):
