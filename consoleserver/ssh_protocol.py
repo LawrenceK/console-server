@@ -15,6 +15,8 @@ cs_help = [
     "help",
     "list",
     "show <portname>",
+    "stop <portname>",
+    "start <portname>",
     "baud <portname> <baud>",
     "bytesize <portname> <5,6,7,8>",
     "stopbits <portname> <1,2>",
@@ -120,6 +122,18 @@ class TSProtocol(protocol.Protocol):
 
     def process_show(self, cfg):
         return ["%s %s" % (k, v) for k, v in cfg.items()]
+
+    def process_stop(self, cfg):
+        ch = self.consolecollection.find_by_name(cfg.name)
+        if not ch:
+            return["Cannot find console %s" % cfg.name, ]
+        ch.close()
+
+    def process_start(self, cfg):
+        ch = self.consolecollection.find_by_name(cfg.name)
+        if ch:
+            return["Console allready started %s" % cfg.name, ]
+        self.consolecollection.open_port(cfg)
 
     def process_create(self, portname):
         # <portname>

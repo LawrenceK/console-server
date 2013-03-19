@@ -131,6 +131,35 @@ class TestTsProtocol(unittest.TestCase):
         name, args, kwargs, result = self.tsprotocol.consolecollection.calls('find_by_name')[0]
         self.assertEqual('/dev/ttyUSB0', args[0])
 
+    def test_stop(self):
+        config.set_config(StringIO(test_config))
+        ch = Dingus(is_attached=False)
+        self.tsprotocol.transport.session.conn.transport.factory.consolecollection = \
+            Dingus(find_by_name__returns=ch)
+        result = self.tsprotocol.process("stop /dev/ttyUSB0")
+        self.failUnless(result is None)
+
+        name, args, kwargs, result = self.tsprotocol.consolecollection.calls('find_by_name')[0]
+        self.assertEqual('/dev/ttyUSB0', args[0])
+        #TODO make sure closed called on the
+        self.assertEqual(1, len(ch.calls('close')))
+        name, args, kwargs, result = ch.calls('close')[0]
+
+    def test_start(self):
+        config.set_config(StringIO(test_config))
+        #TODO dingus so we get a ch taht is not attached
+        self.tsprotocol.transport.session.conn.transport.factory.consolecollection = \
+            Dingus(find_by_name__returns=None)
+        result = self.tsprotocol.process("start /dev/ttyUSB0")
+        self.failUnless(result is None, "Error on start %s" % result)
+
+        name, args, kwargs, result = self.tsprotocol.consolecollection.calls('find_by_name')[0]
+        self.assertEqual('/dev/ttyUSB0', args[0])
+
+        self.assertEqual(1, len(self.tsprotocol.consolecollection.calls('open_port')))
+        name, args, kwargs, result = self.tsprotocol.consolecollection.calls('open_port')[0]
+        self.assertEqual('/dev/ttyUSB0', args[0].name)
+
 #    @patch('ssh_protocol.TSProtocol.sendLine')
     def test_sendlines(self):
         self.tsprotocol.send_lines(['a', 'b'])
