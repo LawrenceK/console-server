@@ -4,7 +4,7 @@ setup(
     version="0.1",
     description="This is a logging console server that can also accessed over ssh.",
     packages=find_packages(),
-    scripts=[''],
+    scripts=[],
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
