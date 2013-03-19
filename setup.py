@@ -32,7 +32,7 @@ setup(
     url="",  # github
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Operating System :: *nix',
+        'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
     ],
 )
