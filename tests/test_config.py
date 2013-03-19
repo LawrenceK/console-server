@@ -42,6 +42,11 @@ class TestConFig(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_default(self):
+        cfg = config.server()
+        self.assertNotEqual(0, len(cfg))
+        self.assertEqual(8022, cfg['sshport'])
+
     def test_load(self):
         config.set_config(StringIO(test_config))
         cfg = config.get_by_name("/dev/ttyUSB0")

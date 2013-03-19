@@ -24,15 +24,9 @@ class TestMonitoredConsoleCollection(unittest.TestCase):
     def tearDown(self):
         pass
 
+    @patch('twisted.internet.reactor.callLater', lambda t, f, cf: f(cf))  # so f is called now.
+    @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_create(self):
-        new_ports = []
-
-        def callback(port_name):
-            new_ports.append(port_name)
-
-# need to mock/patch this
-# reactor.callLater(config.server().get("opendelay", 2), self.open_port, cf)
-
         # patch so we know the notifier
         inotify = Dingus()
         with patch('monitoredconsolecollection.INotify', Dingus(return_value=inotify)):

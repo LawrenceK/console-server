@@ -5,6 +5,9 @@
 """
 import logging
 _log = logging.getLogger('')
+import os
+import os.path
+
 from configobj import ConfigObj
 from validate import Validator
 
@@ -51,7 +54,7 @@ def set_config(infile):
     if not result:
         _log.error("config.ini invalid %s", config)
 
-set_config('config.ini')
+set_config(os.path.join(os.path.dirname(__file__), 'config.ini'))
 
 
 def commit():
