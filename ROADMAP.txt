@@ -1,0 +1,10 @@
+Things still to be done.
+------------------------
+
+Lazy create console collectioon
+Configure monitor path and mask through CLI.
+Change default location of config file
+Copy default config file on install to /etc/consoleserver
+Add 32 port entries to default config file - ttyUSB0 - ttyUSB31
+Configure ssh ports through cli.
+Add Enabled flag to config
