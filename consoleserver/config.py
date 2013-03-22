@@ -5,8 +5,8 @@
 """
 import logging
 _log = logging.getLogger('')
-import os
-import os.path
+#import os
+#import os.path
 
 from configobj import ConfigObj
 from validate import Validator
@@ -19,7 +19,8 @@ dict(bytesize="5,6,7,8",
      xonxoff="0,1",  # true, false
      rtscts="0,1")  # true, false
 
-default = dict(baudrate='9600',
+default = dict(enabled=1,
+               baudrate='9600',
                bytesize='8',
                parity='N',
                stopbits='1',
@@ -46,6 +47,10 @@ rtscts = boolean(default=False)
 sshport = integer()
 """.split('\n')
 
+default_config = """[GLOBAL]
+sshport = 8022
+"""
+
 
 def set_config(infile):
     global config
@@ -54,7 +59,7 @@ def set_config(infile):
     if not result:
         _log.error("config.ini invalid %s", config)
 
-set_config(os.path.join(os.path.dirname(__file__), 'config.ini'))
+set_config(default_config)
 
 
 def commit():
