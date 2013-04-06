@@ -5,12 +5,17 @@ from twisted.internet import reactor
 
 import config
 from monitoredconsolecollection import MonitoredConsoleCollection
+from consolecollection import ConsoleCollection
 from ssh import TSFactory
 
 
 def console_server(consoles=None):
     if not consoles:
-        consoles = MonitoredConsoleCollection(location=config.server().get("monitorpath", None))
+        location = config.server().get("monitorpath", None)
+        if location:
+            consoles = MonitoredConsoleCollection(location=location)
+        else:
+            consoles = ConsoleCollection(location=location)
         consoles.open_all()
 
     # create listening ssh session with cli

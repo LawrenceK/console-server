@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+#from distutils.core import setup
 setup(
     name="ConsoleServer",
     version="0.2",
@@ -35,7 +36,7 @@ setup(
         'ssh',
         'serial',
     ],
-    url="",  # github
+    url='https://github.com/LawrenceK/console-server',  # github
     classifiers=[
         'Development Status :: 4 - Beta',
         'Operating System :: POSIX :: Linux',

@@ -14,9 +14,12 @@ import config
 cs_help = [
     "help",
     "list",
+    "exit",
+    "create <portname>",
     "show <portname>",
     "stop <portname>",
     "start <portname>",
+    "enable <portname> <0,1>",
     "baud <portname> <baud>",
     "bytesize <portname> <5,6,7,8>",
     "stopbits <portname> <1,2>",
@@ -46,7 +49,8 @@ class TSProtocol(protocol.Protocol):
         self.ch.attach(self.data_callback)
         return True
 
-    def connectionLost(self):
+    def connectionLost(self, reason):
+        _log.debug("connectionLost")
         if self.ch:
             self.ch.detach()
         self.ch = None
@@ -103,6 +107,11 @@ class TSProtocol(protocol.Protocol):
         cfg['xonxoff'] = xonxoff
         return self.process_show(cfg)
 
+    def process_enable(self, cfg, enable):
+        cfg['enabled'] = enable
+        if not enable:
+            return self.process_stop(cfg)
+
     def process_timeout(self, cfg, timeout):
         cfg['timeout'] = timeout
         return self.process_show(cfg)
@@ -130,6 +139,8 @@ class TSProtocol(protocol.Protocol):
         ch.close()
 
     def process_start(self, cfg):
+        if not cfg['enabled']:
+            return["Console disabled %s" % cfg.name, ]
         ch = self.consolecollection.find_by_name(cfg.name)
         if ch:
             return["Console allready started %s" % cfg.name, ]
@@ -143,6 +154,9 @@ class TSProtocol(protocol.Protocol):
 
     def process_commit(self):
         config.commit()
+
+    def process_exit(self):
+        self.transport.loseConnection()
 
     def process(self, line):
         # parse the line
@@ -165,6 +179,7 @@ class TSProtocol(protocol.Protocol):
                 return f(portname)
             return f()
         except TypeError, ex:
+            _log.exception("Incomplete/invalid command '%s'" % ex)
             return self.process_help("Incomplete/invalid command '%s'" % line)
 
     def send_cli_prompt(self):
@@ -177,10 +192,10 @@ class TSProtocol(protocol.Protocol):
             self.transport.write(data)
             self.buffer += data
             self.buffer = self.buffer.replace('\r\n', '\n').replace('\r', '\n')
-            _log.debug("dataReceived %s", self.buffer.encode('string_escape'))
             parts = self.buffer.split('\n', 1)
             if len(parts) > 1:
                 line, self.buffer = parts
+                _log.info("command %s", line.encode('string_escape'))
                 response = self.process(line)
                 if self.ch:
                     # we have entered connected mode, any data still in buffer

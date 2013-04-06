@@ -9,10 +9,10 @@ _log = logging.getLogger(__name__)
 
 from zope.interface import implements
 
-from twisted.cred import portal, checkers
+from twisted.cred import portal
 from twisted.conch import avatar
 from twisted.conch.ssh import factory, userauth, connection, keys, session
-from twisted.conch.checkers import SSHPublicKeyDatabase
+from twisted.conch.checkers import SSHPublicKeyDatabase, UNIXPasswordDatabase
 from twisted.python import components
 
 from ssh_protocol import TSProtocol
@@ -94,12 +94,14 @@ class TSSession:
     def closed(self):
         pass
 
-passwdDB = checkers.InMemoryUsernamePasswordDatabaseDontUse()
-passwdDB.addUser('user', 'password')
+#passwdDB = checkers.InMemoryUsernamePasswordDatabaseDontUse()
+#passwdDB.addUser('user', 'password')
 
 TS_portal = portal.Portal(TSRealm())
-TS_portal.registerChecker(passwdDB)
-TS_portal.registerChecker(InMemoryPublicKeyChecker())
+TS_portal.registerChecker(UNIXPasswordDatabase())
+TS_portal.registerChecker(SSHPublicKeyDatabase())
+#TS_portal.registerChecker(passwdDB)
+#TS_portal.registerChecker(InMemoryPublicKeyChecker())
 
 components.registerAdapter(TSSession, TSAvatar, session.ISession)
 

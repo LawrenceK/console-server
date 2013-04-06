@@ -55,27 +55,28 @@ class TestTsProtocol(unittest.TestCase):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("show /dev/ttyUSB0")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
 
     def test_create(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("create /dev/ttyUSB2")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        print result
+        self.assertNotEqual(0, len(result))
         self.assertEqual(3, len(config.get_port_names()))
 
     def test_baud(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("baud /dev/ttyUSB0 19200")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
         self.assertEqual('baudrate 19200', result[0])
 
     def test_bytesize(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("bytesize /dev/ttyUSB0 7")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
         self.assertEqual('bytesize 7', result[1])
 
 #    @patch('config.config', ConfigObj(StringIO(test_config)))
@@ -83,35 +84,35 @@ class TestTsProtocol(unittest.TestCase):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("parity /dev/ttyUSB0 E")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
         self.assertEqual('parity E', result[2])
 
     def test_stopbits(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("stopbits /dev/ttyUSB0 2")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
         self.assertEqual('stopbits 2', result[3])
 
     def test_rtscts(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("rtscts /dev/ttyUSB0 1")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
         self.assertEqual('rtscts 1', result[6])
 
     def test_xonxoff(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("xonxoff /dev/ttyUSB0 1")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
         self.assertEqual('xonxoff 1', result[5])
 
     def test_timeout(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("timeout /dev/ttyUSB0 300")
         self.failUnless(isinstance(result, list))
-        self.assertEqual(8, len(result))
+        self.assertNotEqual(0, len(result))
         self.assertEqual('timeout 300', result[4])
 
     def test_commit(self):
@@ -171,8 +172,8 @@ class TestTsProtocol(unittest.TestCase):
         # test that a new protocol handler started on the global port is in
         # line mode.
         self.tsprotocol.dataReceived('show /dev/ttyUSB0\r\n')
-        # Echo of command, 8 lines from show, 8 line terms, and one cli prompt
-        self.assertEqual(18, len(self.tsprotocol.transport.write.calls))
+        # Echo of command, 9 lines from show, 9 line terms, and one cli prompt
+        self.assertEqual(20, len(self.tsprotocol.transport.write.calls))
 
 #    @patch('ssh_protocol.TSProtocol.sendLine')
     def test_raw_mode(self):

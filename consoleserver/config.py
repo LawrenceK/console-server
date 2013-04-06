@@ -20,13 +20,13 @@ dict(bytesize="5,6,7,8",
      rtscts="0,1")  # true, false
 
 default = dict(enabled=1,
-               baudrate='9600',
-               bytesize='8',
+               baudrate=9600,
+               bytesize=8,
                parity='N',
-               stopbits='1',
-               timeout='0',
-               xonxoff='0',
-               rtscts='0',
+               stopbits=1,
+               timeout=0,
+               xonxoff=0,
+               rtscts=0,
                sshport=0)
 
 
@@ -44,12 +44,13 @@ stopbits = integer(min=1, max=2, default=1)
 timeout = integer()
 xonxoff = boolean(default=False)
 rtscts = boolean(default=False)
+enabled = boolean(default=True)
 sshport = integer()
 """.split('\n')
 
 default_config = """[GLOBAL]
 sshport = 8022
-"""
+""".split('\n')
 
 
 def set_config(infile):
@@ -67,12 +68,15 @@ def commit():
 
 
 def server():
-    return config.get("GLOBAL", {})
+    return config.get('GLOBAL', {})
 
 
 def add_port(port_name, commit_new=False):
     if port_name not in config:
         config[port_name] = dict(default)
+        result = config.validate(Validator())
+        if not result:
+            _log.error("config.ini invalid %s", config)
         if commit_new:
             config.write()
     return config[port_name]

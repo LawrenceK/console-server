@@ -39,11 +39,7 @@ class ConsoleCollection(dict):
         return self.get(port_name, None)
 
     def find_by_port(self, port_nr):
-        _log.debug("find_by_port %s", type(port_nr))
-        for v in self.itervalues():
-            _log.debug("v.sshport %s", type(v.sshport))
-        handlers = [v for v in self.itervalues() if v.sshport == port_nr]
-        _log.debug("find_by_port %s", handlers)
+        handlers = [v for v in self.itervalues() if v and v.sshport == port_nr]
         if handlers:
             return handlers[0]
         return None
@@ -51,7 +47,11 @@ class ConsoleCollection(dict):
     def open_all(self):
         # open any listed in the config that exist
         for port_name in config.get_port_names():
-            if os.path.exists(port_name):
-                self.open_port(config.get_by_name(port_name))
+            cfg = config.get_by_name(port_name)
+            if cfg['enabled']:
+                if os.path.exists(port_name):
+                    self.open_port(cfg)
+                else:
+                    _log.debug("Port %s does not yet exist", port_name)
             else:
-                _log.debug("Port %s does not yet exist", port_name)
+                _log.debug("Port %s disabled", port_name)
