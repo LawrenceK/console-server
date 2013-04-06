@@ -6,7 +6,7 @@ a per port logfile. The connection may be given a data callback which is used to
 port to an active ssh session.
 """
 import logging
-_log = logging.getLogger('')
+_log = logging.getLogger(__name__)
 import os
 import inspect
 

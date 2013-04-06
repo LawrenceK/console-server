@@ -4,7 +4,7 @@
 """ This handles the console server configuration. It uses a configuration spec file.
 """
 import logging
-_log = logging.getLogger('')
+_log = logging.getLogger(__name__)
 #import os
 #import os.path
 
@@ -32,9 +32,9 @@ default = dict(enabled=1,
 
 config = None
 configspec = """[GLOBAL]
-sshport = integer()
-portbase = integer()
-opendelay = integer()
+sshport = integer(default=8022)
+portbase = integer(default=8023)
+opendelay = integer(default=2)
 
 [__many__]
 baudrate = integer()
