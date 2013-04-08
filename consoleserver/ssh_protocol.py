@@ -26,8 +26,24 @@ cs_help = [
     "parity <portname> <N,E,O,M,S>",
     "rtscts <portname> <0,1>",
     "xonxoff <portname> <0,1>",
+    "sshport <portname> <nnnn>",
+    "portmonitor <location>",
 ]
 
+port_cmds = [
+    "create",
+    "show",
+    "stop",
+    "start",
+    "enable",
+    "baud",
+    "bytesize",
+    "stopbits",
+    "parity",
+    "rtscts",
+    "xonxoff",
+    "sshport",
+]
 
 class TSProtocol(protocol.Protocol):
     """This is the control interface to the terminal server,
@@ -116,6 +132,10 @@ class TSProtocol(protocol.Protocol):
         cfg['timeout'] = timeout
         return self.process_show(cfg)
 
+    def process_sshport(self, cfg, sshport):
+        cfg['sshport'] = sshport
+        return self.process_show(cfg)
+
     def process_list(self, message=None):
         ports = config.get_port_names()
         if message:
@@ -166,7 +186,7 @@ class TSProtocol(protocol.Protocol):
         if not f:
             return ["Invalid command %s" % command]
         try:
-            if args:
+            if command in port_cmds:
                 portname = args.pop(0)
                 # the second argument is always a port name
                 cfg = config.get_by_name(portname)
@@ -177,7 +197,7 @@ class TSProtocol(protocol.Protocol):
                 elif command != 'create':
                     return self.process_list("No such port %s" % portname)
                 return f(portname)
-            return f()
+            return f(*args)
         except TypeError, ex:
             _log.exception("Incomplete/invalid command '%s'" % ex)
             return self.process_help("Incomplete/invalid command '%s'" % line)
