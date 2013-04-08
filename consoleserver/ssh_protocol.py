@@ -13,7 +13,8 @@ import config
 
 cs_help = [
     "help",
-    "list",
+    "list [list configuration entries]",
+    "status [list open ports]",
     "exit",
     "create <portname>",
     "show <portname>",
@@ -44,6 +45,7 @@ port_cmds = [
     "xonxoff",
     "sshport",
 ]
+
 
 class TSProtocol(protocol.Protocol):
     """This is the control interface to the terminal server,
@@ -136,6 +138,9 @@ class TSProtocol(protocol.Protocol):
         cfg['sshport'] = sshport
         return self.process_show(cfg)
 
+    def process_status(self, message=None):
+        return ["%s" % (k,) for k, v in self.consolecollection.items()]
+
     def process_list(self, message=None):
         ports = config.get_port_names()
         if message:
@@ -178,6 +183,9 @@ class TSProtocol(protocol.Protocol):
     def process_exit(self):
         self.transport.loseConnection()
 
+    def process_portmonitor(self, location):
+        config.server()["monitorpath"] = location
+
     def process(self, line):
         # parse the line
         args = line.split(" ")
@@ -187,6 +195,8 @@ class TSProtocol(protocol.Protocol):
             return ["Invalid command %s" % command]
         try:
             if command in port_cmds:
+                if not args:
+                    return self.process_help("Missing port name")
                 portname = args.pop(0)
                 # the second argument is always a port name
                 cfg = config.get_by_name(portname)
