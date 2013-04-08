@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DAEMON="consoleserver"
+DAEMON="/usr/local/bin/consoleserver"
 ARGS="-c /etc/consoleserver/config.ini"
 PIDFILE="/var/run/consoleserver.pid"
 
