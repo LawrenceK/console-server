@@ -15,7 +15,7 @@ def console_server(consoles=None):
         if location:
             consoles = MonitoredConsoleCollection(location=location)
         else:
-            consoles = ConsoleCollection(location=location)
+            consoles = ConsoleCollection()
         consoles.open_all()
 
     # create listening ssh session with cli
