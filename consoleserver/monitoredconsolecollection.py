@@ -19,6 +19,7 @@ class MonitoredConsoleCollection(ConsoleCollection):
     """This monitors for new serial ports being created (USB plugged in) and
     makes the ports available."""
     def __init__(self, location='/dev'):
+        super(ConsoleCollection, self).__init__()
         notifier = INotify()
         notifier.watch(FilePath(location), IN_CREATE, callbacks=[self.created])
         notifier.startReading()
