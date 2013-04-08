@@ -1,10 +1,10 @@
-from setuptools import setup, find_packages
-#from distutils.core import setup
+#from setuptools import setup
+from distutils.core import setup
 setup(
     name="ConsoleServer",
     version="0.2",
     description="This is a logging console server that can also accessed over ssh.",
-    packages=find_packages(),
+    packages=['consoleserver', ],
     scripts=[],
 
     # Project uses reStructuredText, so ensure that the docutils get
@@ -16,6 +16,10 @@ setup(
         'pycrypto',
         'pyasn1',
     ],
+
+    data_files=[('/etc/consoleserver', ['consoleserver/config.ini', ]),
+                ('/etc/init.d', ['etc/init.d/consoleserver', ]),
+                ('/etc/udev/rules.d', ['etc/udev/rules.d/99-usb-blacklist.rules', ])],
 
     package_data={
         '': ['*.ini'],
