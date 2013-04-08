@@ -9,6 +9,11 @@ solution can be acheived using a raspberry pi and readily available usb to seria
 e.g. this 16 port one for under £200
 http://www.easysync-ltd.com/product/636/usb2-h-1016-m.html
 
+Authentication
+--------------
+Version 0.2 uses unix password file and users authorised keys for logon therefore the console server
+has to run as root to get access to the relevant files.
+
 Issues with USB hot plug
 ------------------------
 On ubuntu modem-manager is run against all serial ports to probe for it being a modem, 
