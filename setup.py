@@ -2,8 +2,9 @@
 from distutils.core import setup
 setup(
     name="ConsoleServer",
-    version="0.2",
-    description="This is a logging console server that can also accessed over ssh.",
+    version="0.3a",
+    description="This is a logging console server that can also be accessed over ssh.",
+    long_description=file('README.rst').read(),
     packages=['consoleserver', ],
     scripts=[],
 
