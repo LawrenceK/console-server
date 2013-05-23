@@ -48,13 +48,6 @@ class TSRealm:
         return interfaces[0], TSAvatar(avatarId), lambda: None
 
 
-class InMemoryPublicKeyChecker(SSHPublicKeyDatabase):
-
-    def checkKey(self, credentials):
-        return credentials.username == 'user' and \
-            keys.Key.fromString(data=publicKey).blob() == credentials.blob
-
-
 class TSSession:
     implements(session.ISession)
 
@@ -94,14 +87,9 @@ class TSSession:
     def closed(self):
         pass
 
-#passwdDB = checkers.InMemoryUsernamePasswordDatabaseDontUse()
-#passwdDB.addUser('user', 'password')
-
 TS_portal = portal.Portal(TSRealm())
 TS_portal.registerChecker(UNIXPasswordDatabase())
 TS_portal.registerChecker(SSHPublicKeyDatabase())
-#TS_portal.registerChecker(passwdDB)
-#TS_portal.registerChecker(InMemoryPublicKeyChecker())
 
 components.registerAdapter(TSSession, TSAvatar, session.ISession)
 
