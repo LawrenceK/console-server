@@ -7,6 +7,7 @@ source as this is where the logic for the console server sits.
 import logging
 _log = logging.getLogger(__name__)
 import os
+import grp
 
 from zope.interface import implements
 
@@ -27,10 +28,14 @@ class TSAvatar(avatar.ConchUser):
         self.username = username
         self.channelLookup.update({'session': session.SSHSession})
 
-    def is_member_of(self, groupname):
-        """Test for membership of a user group and hence for priviledge levels"""
-        _log.debug("TSAvatar.is_member_of %s", groupname)
-        return True
+    def check_priviledged(self):
+        """Test for membership of root or sudo groups, hence has admin ability"""
+        def is_user_in_group(groupname):
+            return self.username in grp.getgrnam(groupname)[3]
+
+        print "TSAvatar.check_priviledged %s" % self.username
+        _log.debug("TSAvatar.check_priviledged %s", self.username)
+        return is_user_in_group("root") or is_user_in_group("sudo")
 
 
 class TSRealm:

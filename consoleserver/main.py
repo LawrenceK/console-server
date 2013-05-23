@@ -9,6 +9,7 @@ CONFIG_FILENAME = '/etc/consoleserver/config.ini'
 
 def check_config_exists():
     if not os.path.exists(CONFIG_FILENAME):
+        _log.info("Copying default config file %s", CONFIG_FILENAME)
         if not os.path.exists(os.path.dirname(CONFIG_FILENAME)):
             os.mkdir(os.path.dirname(CONFIG_FILENAME))
         import shutil
@@ -20,7 +21,7 @@ def main():
                         format='%(asctime)s %(levelname)s [%(funcName)s] %(message)s')
     import config
     check_config_exists()
-    config.set_config(DEF_CONFIG_NAME)
+    config.set_config(CONFIG_FILENAME)
     from consoleserver import console_server
     console_server()
     _log.info("Starting twisted reactor")

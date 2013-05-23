@@ -82,15 +82,18 @@ class TSProtocol(protocol.Protocol):
             self.ch.detach()
         self.ch = None
 
+    def goodbye(self, message='Good Bye'):
+        self.send_lines([message])
+        self.transport.loseConnection()
+
     def connectionMade(self):
         # Is this a ssh session on a port for direct connection
-        if self.do_attach(self.consolecollection.find_by_port(self.transport.getHost().address.port)):
-            _log.debug("Running in connected mode")
-        elif self.avatar.is_member_of('consoleserver_admin'):
-            _log.debug("Running in CLI mode")
-            self.send_cli_prompt()
-        else:
-            raise Exception("User %s not allowed to administer the console server", self.avatar.username)
+        if not self.do_attach(self.consolecollection.find_by_port(self.transport.getHost().address.port)):
+            if self.avatar.check_priviledged():
+                _log.debug("Running in CLI mode")
+                self.send_cli_prompt()
+            else:
+                self.goodbye("User %s not allowed to administer the console server" % self.avatar.username)
 
     def send_lines(self, lines):
         _log.debug("send_lines %s", lines)
@@ -207,7 +210,7 @@ class TSProtocol(protocol.Protocol):
         config.commit()
 
     def process_exit(self):
-        self.transport.loseConnection()
+        self.goodbye()
 
     def process_portmonitor(self, location):
         config.server()["monitorpath"] = location

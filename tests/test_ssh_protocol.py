@@ -4,7 +4,7 @@ _log = logging.getLogger(__name__)
 import unittest
 from StringIO import StringIO
 
-from dingus import patch, Dingus
+from dingus import Dingus
 
 import config
 from ssh_protocol import TSProtocol
@@ -33,6 +33,7 @@ xonxoff = 0
 rtscts = 0
 sshport = 8024
 """
+
 
 class dummy_avatar():
     username = "test_user"
@@ -64,7 +65,6 @@ class TestTsProtocol(unittest.TestCase):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("create /dev/ttyUSB2")
         self.failUnless(isinstance(result, list))
-        print result
         self.assertNotEqual(0, len(result))
         self.assertEqual(3, len(config.get_port_names()))
 
