@@ -19,6 +19,7 @@ cs_help = [
     "status [list open ports]",
     "exit",
     "create <portname>",
+    "reload <portname>",
     "show <portname>",
     "stop <portname>",
     "start <portname>",
@@ -50,6 +51,7 @@ port_cmds = [
     "sshport",
     "timeout",
     "logfile",
+    "reload",
 ]
 
 
@@ -185,6 +187,10 @@ class TSProtocol(protocol.Protocol):
         if ch:
             return["Console allready started %s" % cfg.name, ]
         self.consolecollection.open_port(cfg)
+
+    def process_reload(self, cfg):
+        # both commands return error message or None
+        return self.process_stop(cfg) or self.process_start(cfg)
 
     def process_create(self, portname):
         # <portname>
