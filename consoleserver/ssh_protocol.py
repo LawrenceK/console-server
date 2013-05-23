@@ -149,6 +149,8 @@ class TSProtocol(protocol.Protocol):
         # path should be absolute or deemed relative to /var/log/consoleserver
         if cfg['logfile']:
             cfg['logfile'] = os.path.join('/var/log/consoleserver', cfg['logfile'])
+            if not cfg['logfile'].endswith('.log'):
+                cfg['logfile'] = cfg['logfile'] + '.log'
         return self.process_show(cfg)
 
     def process_status(self, message=None):

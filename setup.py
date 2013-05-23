@@ -17,9 +17,11 @@ setup(
         'pyasn1',
     ],
 
-    data_files=[('/etc/consoleserver', ['consoleserver/config.ini', ]),
-                ('/etc/init.d', ['etc/init.d/consoleserver', ]),
-                ('/etc/udev/rules.d', ['etc/udev/rules.d/99-usb-blacklist.rules', ])],
+    data_files=[('/etc/init.d', ['etc/init.d/consoleserver', ]),
+                ('/etc/logrotate.d', ['etc/logrotate.d/consoleserver', ]),
+                ('/etc/udev/rules.d', ['etc/udev/rules.d/99-usb-blacklist.rules', ])
+#                ('/etc/consoleserver', ['consoleserver/config.ini', ]),
+                ],
 
     package_data={
         '': ['*.ini'],
