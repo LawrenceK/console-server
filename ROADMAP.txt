@@ -4,6 +4,10 @@ Things still to be done.
 Lazy create console collection
 Configure monitor path and mask through CLI.
 Copy default config file on install to /etc/consoleserver
+Configure logfile
+default logrotate file
+add reload port to apply changes to config
+require priv to login to master port
 
 To Test
 --------------
@@ -15,3 +19,5 @@ Add 32 port entries to default config file - ttyUSB0 - ttyUSB31
 Tested
 -------
 process_exit
+
+RaspberryPI 10.9.201.3/DHCP

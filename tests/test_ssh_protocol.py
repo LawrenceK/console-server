@@ -115,6 +115,18 @@ class TestTsProtocol(unittest.TestCase):
         self.assertNotEqual(0, len(result))
         self.assertEqual('timeout 300', result[4])
 
+    def test_logfile(self):
+        config.set_config(StringIO(test_config))
+        result = self.tsprotocol.process("logfile /dev/ttyUSB0 ttyUSB0")
+        _log.debug("response %s", result)
+        self.failUnless(isinstance(result, list))
+        self.assertNotEqual(0, len(result))
+        self.assertEqual('logfile /var/log/consoleserver/ttyUSB0', result[9])
+        result = self.tsprotocol.process("logfile /dev/ttyUSB0 /ttyUSB0")
+        self.failUnless(isinstance(result, list))
+        self.assertNotEqual(0, len(result))
+        self.assertEqual('logfile /ttyUSB0', result[9])
+
     def test_commit(self):
         config.set_config(StringIO(test_config))
         result = self.tsprotocol.process("commit")

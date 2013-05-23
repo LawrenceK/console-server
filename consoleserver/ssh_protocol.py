@@ -7,6 +7,8 @@ to reconfigure the console server and/or connect to a specific serial port.
 """
 import logging
 _log = logging.getLogger(__name__)
+import os
+import os.path
 
 from twisted.internet import protocol
 import config
@@ -28,10 +30,12 @@ cs_help = [
     "rtscts <portname> <0,1>",
     "xonxoff <portname> <0,1>",
     "sshport <portname> <nnnn>",
+    "logfile <portname> <logfile>",
     "portmonitor <location>",
 ]
 
 port_cmds = [
+    "connect",
     "create",
     "show",
     "stop",
@@ -44,6 +48,8 @@ port_cmds = [
     "rtscts",
     "xonxoff",
     "sshport",
+    "timeout",
+    "logfile",
 ]
 
 
@@ -136,6 +142,13 @@ class TSProtocol(protocol.Protocol):
 
     def process_sshport(self, cfg, sshport):
         cfg['sshport'] = sshport
+        return self.process_show(cfg)
+
+    def process_logfile(self, cfg, logfile=None):
+        cfg['logfile'] = logfile
+        # path should be absolute or deemed relative to /var/log/consoleserver
+        if cfg['logfile']:
+            cfg['logfile'] = os.path.join('/var/log/consoleserver', cfg['logfile'])
         return self.process_show(cfg)
 
     def process_status(self, message=None):

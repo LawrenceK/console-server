@@ -7,7 +7,6 @@ port to an active ssh session.
 """
 import logging
 _log = logging.getLogger(__name__)
-import os
 import inspect
 
 from twisted.internet import reactor
@@ -27,7 +26,7 @@ class ConsoleHandler(Protocol):
         self.closed_callback = closed_callback
         self._data_callback = data_callback
         self.log_file = None
-        self.logfile_name = os.path.abspath(kwargs.pop('logfile', os.path.basename(port_name)))
+        self.logfile_name = kwargs.pop('logfile', None)
         self.last_log = ConsoleHandler.LS_NONE
         knownargs, _, _, _ = inspect.getargspec(serialport.SerialPort.__init__)
 
@@ -57,16 +56,17 @@ class ConsoleHandler(Protocol):
             self.listener.stopListening()
 
     def write_log(self, log_type, data):
-        if not self.log_file:
+        if not self.log_file and self.logfile_name:
             self.log_file = open(self.logfile_name, 'a')
             self.last_log = log_type
             self.log_file.write(self.last_log)
-        if log_type != self.last_log:
-            self.last_log = log_type
-            # CRLF ?
-            self.log_file.write("\r\n")
-            self.log_file.write(self.last_log)
-        self.log_file.write(data.encode('string_escape'))
+        if self.log_file:
+            if log_type != self.last_log:
+                self.last_log = log_type
+                # CRLF ?
+                self.log_file.write("\r\n")
+                self.log_file.write(self.last_log)
+            self.log_file.write(data.encode('string_escape'))
 
     def write(self, data):
         self.write_log(ConsoleHandler.LS_WRITE, data)
