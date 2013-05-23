@@ -2,8 +2,8 @@ Things still to be done.
 ------------------------
 
 Lazy create console collection
-add reload port to apply changes to config
 require priv to login to master port
+Generate server key pair on first run.
 
 To Test
 --------------
@@ -15,6 +15,7 @@ Configure logfile
 default logrotate file
 Copy default config file on install to /etc/consoleserver
 Configure monitor path and mask through CLI.
+add reload port to apply changes to config
 
 Tested
 -------

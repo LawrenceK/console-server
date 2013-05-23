@@ -59,7 +59,8 @@ class TSProtocol(protocol.Protocol):
     """This is the control interface to the terminal server,
     it can be told to connect to a single port.
     """
-    def __init__(self):
+    def __init__(self, avatar):
+        self.avatar = avatar    # who are we
         self.ch = None
         self.buffer = b''
 
@@ -83,9 +84,13 @@ class TSProtocol(protocol.Protocol):
 
     def connectionMade(self):
         # Is this a ssh session on a port for direct connection
-        if not self.do_attach(self.consolecollection.find_by_port(self.transport.getHost().address.port)):
+        if self.do_attach(self.consolecollection.find_by_port(self.transport.getHost().address.port)):
+            _log.debug("Running in connected mode")
+        elif self.avatar.is_member_of('consoleserver_admin'):
             _log.debug("Running in CLI mode")
             self.send_cli_prompt()
+        else:
+            raise Exception("User %s not allowed to administer the console server", self.avatar.username)
 
     def send_lines(self, lines):
         _log.debug("send_lines %s", lines)

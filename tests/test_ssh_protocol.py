@@ -34,11 +34,14 @@ rtscts = 0
 sshport = 8024
 """
 
+class dummy_avatar():
+    username = "test_user"
+
 
 class TestTsProtocol(unittest.TestCase):
 
     def setUp(self):
-        self.tsprotocol = TSProtocol()
+        self.tsprotocol = TSProtocol(dummy_avatar())
         self.tsprotocol.transport = Dingus()
         self.tsprotocol.transport.session.conn.transport.factory.consolecollection = Dingus()
 
@@ -121,11 +124,11 @@ class TestTsProtocol(unittest.TestCase):
         _log.debug("response %s", result)
         self.failUnless(isinstance(result, list))
         self.assertNotEqual(0, len(result))
-        self.assertEqual('logfile /var/log/consoleserver/ttyUSB0', result[9])
+        self.assertEqual('logfile /var/log/consoleserver/ttyUSB0.log', result[9])
         result = self.tsprotocol.process("logfile /dev/ttyUSB0 /ttyUSB0")
         self.failUnless(isinstance(result, list))
         self.assertNotEqual(0, len(result))
-        self.assertEqual('logfile /ttyUSB0', result[9])
+        self.assertEqual('logfile /ttyUSB0.log', result[9])
 
     def test_commit(self):
         config.set_config(StringIO(test_config))

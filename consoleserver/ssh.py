@@ -40,6 +40,10 @@ class TSAvatar(avatar.ConchUser):
         self.username = username
         self.channelLookup.update({'session': session.SSHSession})
 
+    def is_member_of(self, groupname):
+        """Test for membership of a user group and hence for priviledge levels"""
+        _log.debug("TSAvatar.is_member_of %s", groupname)
+        return True
 
 class TSRealm:
     implements(portal.IRealm)
@@ -52,10 +56,7 @@ class TSSession:
     implements(session.ISession)
 
     def __init__(self, avatar):
-        """
-        We don't use it, but the adapter is passed the avatar as its first
-        argument.
-        """
+        self.avatar = avatar
 
     @property
     def factory(self):
@@ -74,7 +75,7 @@ class TSSession:
         # protocol.factory
         # protocol.transport
         # TODO if port is global sshport create CLI
-        ts_protocol = TSProtocol()
+        ts_protocol = TSProtocol(self.avatar)
         ts_protocol.makeConnection(protocol)
         protocol.makeConnection(session.wrapProtocol(ts_protocol))
 
