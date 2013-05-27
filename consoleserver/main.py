@@ -17,7 +17,7 @@ def check_config_exists():
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s [%(funcName)s] %(message)s')
     import config
     check_config_exists()

@@ -1,3 +1,4 @@
 include *.txt
-recursive-include docs *.txt
+recursive-include docs *
 recursive-include consoleserver *.ini
+recursive-include etc *
