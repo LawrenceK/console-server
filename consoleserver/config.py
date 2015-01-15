@@ -59,6 +59,7 @@ def set_config(infile):
     result = config.validate(Validator())
     if not result:
         _log.error("config.ini invalid %s", config)
+    _log.info("ports %s", config.keys())
 
 set_config(default_config)
 
@@ -84,7 +85,9 @@ def add_port(port_name, commit_new=False):
 
 def get_by_name(port_name):
     if port_name in config:
+        _log.info("get_by_name %s", port_name)
         return config[port_name]
+    _log.error("get_by_name not found %s", port_name)
     return None
 
 

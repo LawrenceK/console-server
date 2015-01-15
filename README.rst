@@ -157,6 +157,8 @@ Unit Tests
 
 Most of the code is unit tested.
 
+PYTHONPATH=../consoleserver nosetests
+
 Licence
 --------------
 
