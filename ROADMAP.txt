@@ -4,6 +4,7 @@ Things still to be done.
 Lazy create console collection
 Configure monitor path and mask through CLI.
 Copy default config file on install to /etc/consoleserver
+Log to single log file with port name and hex dump, possible CSV?
 
 To Test
 --------------

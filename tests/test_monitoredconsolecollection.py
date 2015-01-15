@@ -6,15 +6,43 @@ import os.path
 import logging
 _log = logging.getLogger(__name__)
 
+from StringIO import StringIO
+
 import unittest
 from dingus import patch, Dingus
 
 from twisted.python.filepath import FilePath
 
+import config
 from monitoredconsolecollection import MonitoredConsoleCollection
 
 test_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'work'))
 
+
+test_config = """[GLOBAL]
+sshport = 8022
+portbase = 8023
+
+[/dev/ttyUSB0]
+baudrate = 9600
+bytesize = 8
+parity = N
+stopbits = 1
+timeout = 0
+xonxoff = 0
+rtscts = 1
+sshport = 8023
+
+[/dev/ttyUSB1]
+baudrate = 9600
+bytesize = 8
+parity = N
+stopbits = 1
+timeout = 0
+xonxoff = 1
+rtscts = 0
+sshport = 8024
+"""
 
 class TestMonitoredConsoleCollection(unittest.TestCase):
 
@@ -28,6 +56,7 @@ class TestMonitoredConsoleCollection(unittest.TestCase):
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_create(self):
         # patch so we know the notifier
+        config.set_config(StringIO(test_config))
         inotify = Dingus()
         with patch('monitoredconsolecollection.INotify', Dingus(return_value=inotify)):
             collection = MonitoredConsoleCollection()

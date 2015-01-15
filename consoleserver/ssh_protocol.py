@@ -17,6 +17,7 @@ cs_help = [
     "status [list open ports]",
     "exit",
     "create <portname>",
+    "connect <portname>",
     "show <portname>",
     "stop <portname>",
     "start <portname>",
@@ -29,10 +30,12 @@ cs_help = [
     "xonxoff <portname> <0,1>",
     "sshport <portname> <nnnn>",
     "portmonitor <location>",
+    "timeout <portname> <seconds>",
 ]
 
 port_cmds = [
     "create",
+    "connect",
     "show",
     "stop",
     "start",
@@ -44,6 +47,7 @@ port_cmds = [
     "rtscts",
     "xonxoff",
     "sshport",
+    "timeout",
 ]
 
 
@@ -188,6 +192,7 @@ class TSProtocol(protocol.Protocol):
 
     def process(self, line):
         # parse the line
+        _log.info("Command '%s'" % line)
         args = line.split(" ")
         command = args.pop(0)
         f = getattr(self, "process_%s" % command, None)

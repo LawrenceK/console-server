@@ -28,3 +28,7 @@ be a member of this group or to run as root.
 Unit Tests
 ----------
 Most of the code is unit tested.
+
+To run them 
+cd tests
+PYTHONPATH=../consoleserver python testAll.py
