@@ -15,11 +15,11 @@ from ssh import TSFactory
 
 
 class ConsoleCollection(dict):
-    def open_port(self, config):
+    def open_port(self, config, logger=None):
         if config.name in self:
             raise ValueError('port %s already open' % config.name)
         try:
-            self[config.name] = ConsoleHandler(config.name, closed_callback=self.closed, **config)
+            self[config.name] = ConsoleHandler(config.name, closed_callback=self.closed, logger=logger, **config)
             # start an ssh listener for this port
             if self[config.name].sshport:
                 self[config.name].listener = reactor.listenTCP(self[config.name].sshport, TSFactory(self))
@@ -46,11 +46,16 @@ class ConsoleCollection(dict):
 
     def open_all(self):
         # open any listed in the config that exist
+        sharedfile = config.server().get("logfile", "")
+        logger = None;
+        if len(sharedfile) > 0:
+            logger = LogFile(sharedfile)
+
         for port_name in config.get_port_names():
             cfg = config.get_by_name(port_name)
             if cfg['enabled']:
                 if os.path.exists(port_name):
-                    self.open_port(cfg)
+                    self.open_port(cfg, logger)
                 else:
                     _log.debug("Port %s does not yet exist", port_name)
             else:
