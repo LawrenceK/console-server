@@ -4,7 +4,7 @@ import logging
 _log = logging.getLogger(__name__)
 
 import unittest
-import consolehandler
+from consoleserver import consolehandler
 
 from dingus import patch
 
@@ -21,7 +21,6 @@ class TestConsoleHandler(unittest.TestCase):
     def test_create(self):
         logfile_name = 'test_port.log'
         config = dict(port='test_port',
-                      logfile=logfile_name,
                       baudrate=9600,
                       # bytesize=serialport.EIGHTBITS,
                       # parity=serialport.PARITY_NONE,
@@ -32,7 +31,8 @@ class TestConsoleHandler(unittest.TestCase):
                       )
         if os.path.exists(logfile_name):
             os.remove(logfile_name)
-
+        # TODO
+        # Get logger and add handler/formatter
         c = consolehandler.ConsoleHandler(config['port'], **config)
 
         c.connectionMade()

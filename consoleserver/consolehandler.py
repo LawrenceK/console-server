@@ -14,19 +14,14 @@ from twisted.internet import reactor
 from twisted.internet import serialport
 from twisted.internet.protocol import Protocol
 
-from logfile import LogFile
 
 # Protocol handler
 class ConsoleHandler(Protocol):
-    def __init__(self, port_name, closed_callback=None, data_callback=None, logger=None, **kwargs):
+    def __init__(self, port_name, closed_callback=None, data_callback=None, **kwargs):
         _log.debug("Config %s: %s", port_name, kwargs)
         self.sshport = kwargs.pop('sshport', None)
         self.closed_callback = closed_callback
         self._data_callback = data_callback
-        self.log = logger
-        if self.log == None:
-            self.log = LogFile(kwargs.pop('logfile', os.path.basename(port_name)))
-        self.log.access()
         knownargs, _, _, _ = inspect.getargspec(serialport.SerialPort.__init__)
 
         self.serial_port = \
@@ -35,7 +30,9 @@ class ConsoleHandler(Protocol):
                                   reactor,
                                   **dict((k, v) for k, v in kwargs.iteritems() if k in knownargs)
                                   )
-        self.port_name = os.path.basename(self.serial_port.name)
+        self.port_name = os.path.basename(port_name)
+#        self.port_name = os.path.basename(self.serial_port.name)
+        self.portlog = logging.getLogger("port.%s" % self.port_name)
 
     @property
     def is_attached(self):
@@ -55,13 +52,16 @@ class ConsoleHandler(Protocol):
         if self.sshport:
             self.listener.stopListening()
 
+    def do_log(self, inbound, data):
+        self.portlog.info(data)
+
     def write(self, data):
-        self.log.write_log(LogFile.LS_WRITE, self.port_name, data)
+        # from ssh?
+        self.do_log(False, data)
         self.transport.write(data)
 
     def connectionLost(self, reason):
         _log.debug("connectionLost")
-        self.log.deaccess()
         if self.closed_callback:
             self.closed_callback(self)
         self.close()
@@ -71,9 +71,7 @@ class ConsoleHandler(Protocol):
 
     def dataReceived(self, data):
         _log.debug("dataReceived %s", data)
-        # write to log file
-        # are we connected to telnet
-        # send data
-        self.log.write_log(LogFile.LS_READ, self.port_name, data)
+        self.do_log(True, data)
         if self._data_callback:
+            # to ssh?
             self._data_callback(data)

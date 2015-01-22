@@ -13,8 +13,8 @@ from dingus import patch, Dingus
 
 from twisted.python.filepath import FilePath
 
-import config
-from monitoredconsolecollection import MonitoredConsoleCollection
+from consoleserver import config
+from consoleserver.monitoredconsolecollection import MonitoredConsoleCollection
 
 test_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'work'))
 
@@ -58,7 +58,7 @@ class TestMonitoredConsoleCollection(unittest.TestCase):
         # patch so we know the notifier
         config.set_config(StringIO(test_config))
         inotify = Dingus()
-        with patch('monitoredconsolecollection.INotify', Dingus(return_value=inotify)):
+        with patch('consoleserver.monitoredconsolecollection.INotify', Dingus(return_value=inotify)):
             collection = MonitoredConsoleCollection()
             name, args, kwargs, result = inotify.calls('watch')[0]
             self.assertEqual(2, len(args))

@@ -6,8 +6,8 @@ from StringIO import StringIO
 
 from dingus import Dingus
 
-import config
-from ssh_protocol import TSProtocol
+from consoleserver import config
+from consoleserver.ssh_protocol import TSProtocol
 
 test_config = """[GLOBAL]
 sshport = 8022

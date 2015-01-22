@@ -4,7 +4,7 @@ _log = logging.getLogger(__name__)
 from StringIO import StringIO
 
 import unittest
-import config
+from consoleserver import config
 
 #from dingus import patch
 

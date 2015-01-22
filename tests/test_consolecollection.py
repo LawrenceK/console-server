@@ -9,9 +9,9 @@ import unittest
 from dingus import patch, Dingus
 from StringIO import StringIO
 
-from consolehandler import ConsoleHandler
-from consolecollection import ConsoleCollection
-import config
+from consoleserver.consolehandler import ConsoleHandler
+from consoleserver.consolecollection import ConsoleCollection
+from consoleserver import config
 
 test_config = """[GLOBAL]
 sshport = 8022
@@ -61,8 +61,8 @@ class TestConsoleCollection(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @patch('ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
-    @patch('ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_create(self):
         listenTCP = Dingus()
@@ -70,8 +70,8 @@ class TestConsoleCollection(unittest.TestCase):
             collection = ConsoleCollection()
             self.assertEqual(0, len(collection))
 
-    @patch('ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
-    @patch('ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_open_port(self):
         listenTCP = Dingus()
@@ -85,8 +85,8 @@ class TestConsoleCollection(unittest.TestCase):
             ch = collection.find_by_name('/dev/ttyUSB0')
             self.assertIsInstance(ch, ConsoleHandler)
 
-    @patch('ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
-    @patch('ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_find_by_name(self):
         listenTCP = Dingus()
@@ -102,8 +102,8 @@ class TestConsoleCollection(unittest.TestCase):
             ch = collection.find_by_name('/dev/ttyUSB1')
             self.assertEqual(None, ch)
 
-    @patch('ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
-    @patch('ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_find_by_port(self):
         listenTCP = Dingus()
@@ -120,8 +120,8 @@ class TestConsoleCollection(unittest.TestCase):
             ch = collection.find_by_port(8024)
             self.assertEqual(None, ch)
 
-    @patch('ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
-    @patch('ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_close_port(self):
         listenTCP = Dingus()
@@ -135,8 +135,8 @@ class TestConsoleCollection(unittest.TestCase):
             collection.close_port('/dev/ttyUSB0')
             #TODO test invalid key
 
-    @patch('ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
-    @patch('ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.publickey_file', TEST_PUBLICKEYFILE)
+    @patch('consoleserver.ssh.TSFactory.privatekey_file', TEST_PRIVATEKEYFILE)
     @patch('twisted.internet.serialport.SerialPort', Dingus(return_value=Dingus()))
     def test_closed(self):
         listenTCP = Dingus()
