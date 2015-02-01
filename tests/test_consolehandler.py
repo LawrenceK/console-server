@@ -33,6 +33,14 @@ class TestConsoleHandler(unittest.TestCase):
             os.remove(logfile_name)
         # TODO
         # Get logger and add handler/formatter
+        portlog = logging.getLogger("port.test_port")
+        portlog.setLevel(logging.INFO)
+        h = logging.FileHandler( logfile_name, "a")
+        h.setLevel(logging.INFO)
+        f = logging.Formatter("%(asctime)s %(name)s %(message)s", "%H:%M:%S")
+        h.setFormatter(f)
+        portlog.addHandler(h)
+
         c = consolehandler.ConsoleHandler(config['port'], **config)
 
         c.connectionMade()
