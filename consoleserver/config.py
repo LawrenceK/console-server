@@ -15,7 +15,7 @@ from validate import Validator
 dict(bytesize="5,6,7,8",
      stopbits="1,1.5,2",
      parity="N,E,O,M,S",
-     timeout="integer",
+     timeout="float",
      xonxoff="0,1",  # true, false
      rtscts="0,1")  # true, false
 
@@ -41,11 +41,12 @@ baudrate = integer()
 bytesize = integer(min=5, max=8, default=8)
 parity = option('N', 'E', 'O', 'M', 'S')
 stopbits = integer(min=1, max=2, default=1)
-timeout = integer()
+timeout = float()
 xonxoff = boolean(default=False)
 rtscts = boolean(default=False)
 enabled = boolean(default=True)
 sshport = integer()
+logtype = integer()
 """.split('\n')
 
 default_config = """[GLOBAL]

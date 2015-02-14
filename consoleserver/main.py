@@ -18,16 +18,18 @@ def check_exists(srcName, destName):
         shutil.copy2(os.path.join(os.path.dirname(os.path.abspath(__file__)), srcName), destName)
 
 def check_config_exists():
-    check_exists(DEF_CONFIG_NAME, CONFIG_FILENAME):
-
+    check_exists(DEF_CONFIG_NAME, CONFIG_FILENAME)
+    check_exists(DEF_LOGGING_NAME, LOGGING_FILENAME)
 
 def main():
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s [%(funcName)s] %(message)s')
     import config
     check_config_exists()
-    logging.config.fileConfig(LOGGING_FILENAME)
-    config.set_config(CONFIG_FILENAME)
+#    logging.config.fileConfig(LOGGING_FILENAME)
+    logging.config.fileConfig(os.path.join(os.path.dirname(os.path.abspath(__file__)), DEF_LOGGING_NAME))
+#    config.set_config(CONFIG_FILENAME)
+    config.set_config(os.path.join(os.path.dirname(os.path.abspath(__file__)), DEF_CONFIG_NAME))
     from consoleserver import console_server
     console_server()
     _log.info("Starting twisted reactor")
