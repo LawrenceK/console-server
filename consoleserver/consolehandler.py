@@ -27,9 +27,15 @@ class ConsoleHandler(Protocol):
         self.logtype = kwargs.pop('logtype', ConsoleHandler.LOG_ASCII)
         self.closed_callback = closed_callback
         self._data_callback = data_callback
+        self.logdata = ""
+        self.timer = None
         knownargs, _, _, _ = inspect.getargspec(serialport.SerialPort.__init__)
         sargs = dict((k, v) for k, v in kwargs.iteritems() if k in knownargs)
         _log.debug("Open %s: %s", port_name, sargs)
+        
+        self.port_name = os.path.basename(port_name)
+#        self.port_name = os.path.basename(self.serial_port.name)
+        self.portlog = logging.getLogger("port.%s" % self.port_name)
 
         self.serial_port = \
             serialport.SerialPort(self,
@@ -37,9 +43,9 @@ class ConsoleHandler(Protocol):
                                   reactor,
                                   **sargs
                                   )
-        self.port_name = os.path.basename(port_name)
-#        self.port_name = os.path.basename(self.serial_port.name)
-        self.portlog = logging.getLogger("port.%s" % self.port_name)
+        _log.debug("interCharTimeout %s", self.serial_port._serial.interCharTimeout)
+        self.serial_port._serial.interCharTimeout = float(kwargs['interChartimeout'])
+        _log.debug("interCharTimeout %s", self.serial_port._serial.interCharTimeout)
 
     @property
     def is_attached(self):
@@ -59,13 +65,30 @@ class ConsoleHandler(Protocol):
         if self.sshport:
             self.listener.stopListening()
 
-    def do_log(self, inbound, data):
+    def flush_log(self):
         if self.logtype == ConsoleHandler.LOG_ASCII:
-            self.portlog.info("".join( [c if ord(c) >= 32 else hex(ord(c)) for c in data ] ))
+            self.portlog.info("".join( [c if ord(c) >= 32 else hex(ord(c)) for c in self.logdata ] ))
         elif self.logtype == ConsoleHandler.LOG_HEX:
-            self.portlog.info(binascii.hexlify(data))
+            hexstr = " ".join( [binascii.hexlify(c) for c in self.logdata ] )
+            self.portlog.info(hexstr)
         elif self.logtype == ConsoleHandler.LOG_BOTH:
-            self.portlog.info("".join( [c if ord(c) >= 32 else '.' for c in data ] ) + " " + binascii.hexlify(data))
+            for i in range(0,len(self.logdata),16):
+                # TODO pad characters
+                hexstr = " ".join( [binascii.hexlify(c) for c in self.logdata[i:i+16] ] )
+                self.portlog.info( hexstr + " "*(49-len(hexstr)) + "".join( [c if ord(c) >= 32 else '.' for c in self.logdata[i:i+16] ] ) )
+        else:
+            _log.info("no logtype %s", self.logdata)
+
+        self.logdata = ""
+
+    def do_log(self, inbound, data):
+        self.logdata = self.logdata + data
+        # TODO start time for 0.2 seconds and then flush log.
+        if self.timer and self.timer.active():
+            self.timer.reset(0.2)
+        else:
+            self.timer = reactor.callLater(0.2, self.flush_log)
+        #self.flush_log()
 
     def write(self, data):
         # from ssh?
