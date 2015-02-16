@@ -35,7 +35,7 @@ class ConsoleHandler(Protocol):
         self.timer = None
         knownargs, _, _, _ = inspect.getargspec(serialport.SerialPort.__init__)
         sargs = dict((k, v) for k, v in kwargs.iteritems() if k in knownargs)
-        _log.debug("Open %s: %s", port_name, sargs)
+        _log.info("Open %s: %s", port_name, sargs)
         
         idx = port_name[-2:] if str.isdigit(port_name[-2:]) else port_name[-1:]
 #        self.port_name = os.path.basename(port_name)
@@ -60,7 +60,6 @@ class ConsoleHandler(Protocol):
         self._data_callback = None
 
     def close(self):
-        _log.debug("close")
         if self.serial_port:
             self.serial_port.loseConnection()
             self.serial_port = None
@@ -84,7 +83,7 @@ class ConsoleHandler(Protocol):
                 hexstr = " ".join( [binascii.hexlify(c) for c in self.logdata[i:i+16] ] )
                 self.portlog.info( hexstr + " "*(49-len(hexstr)) + "".join( [c if ord(c) >= 32 else '.' for c in self.logdata[i:i+16] ] ) )
         else:
-            _log.info("no logtype %s", self.logdata)
+            _log.error("no logtype %s", self.logdata)
 
         self.logdata = ""
 
@@ -95,7 +94,6 @@ class ConsoleHandler(Protocol):
             self.timer.reset(0.2)
         else:
             self.timer = reactor.callLater(0.2, self.flush_log)
-        #self.flush_log()
 
     def write(self, data):
         # from ssh?
