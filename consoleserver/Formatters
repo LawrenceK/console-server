@@ -1,0 +1,20 @@
+import logging.Formatter
+
+class HexFormatter(logging.Formatter):
+    def format(self, record):
+        record.msg = " ".join( [binascii.hexlify(c) for c in record.msg ] )
+        return super(HexFormatter , self).format(record)
+
+class AsciiFormatter(logging.Formatter):
+    def format(self, record):
+        record.msg = "".join( [c if ord(c) >= 32 else hex(ord(c)) for c in record.msg ] )
+        return super(HexFormatter , self).format(record)
+
+class HexAsciiFormatter(logging.Formatter):
+    def format(self, record):
+        log_messages = []
+        for i in range(0,len(self.logdata),16):
+            hexstr = " ".join( [binascii.hexlify(c) for c in record.msg[i:i+16] ] )
+            record.msg = hexstr + " "*(49-len(hexstr)) + "".join( [c if ord(c) >= 32 else '.' for c in record.msg[i:i+16] ] ) )
+            log_messages.append( super(HexFormatter , self).format(record) )
+        return "\n".joiun(log_messages)
