@@ -16,6 +16,10 @@ from twisted.internet import serialport
 from twisted.internet.protocol import Protocol
 
 
+def ascii_escape(data):
+    # TOFO handle CR/LF
+    return "".join( [c if ord(c) >= 32 else hex(ord(c)) for c in data ] )
+
 # Protocol handler
 class ConsoleHandler(Protocol):
     LOG_NONE = 0
@@ -33,19 +37,17 @@ class ConsoleHandler(Protocol):
         sargs = dict((k, v) for k, v in kwargs.iteritems() if k in knownargs)
         _log.debug("Open %s: %s", port_name, sargs)
         
-        self.port_name = os.path.basename(port_name)
-#        self.port_name = os.path.basename(self.serial_port.name)
-        self.portlog = logging.getLogger("port.%s" % self.port_name)
+        idx = port_name[-2:] if str.isdigit(port_name[-2:]) else port_name[-1:]
+#        self.port_name = os.path.basename(port_name)
+        self.portlog = logging.getLogger("port.%s" % idx)
 
-        self.serial_port = \
-            serialport.SerialPort(self,
+        self.serial_port = serialport.SerialPort(self,
                                   port_name,
                                   reactor,
                                   **sargs
                                   )
-        _log.debug("interCharTimeout %s", self.serial_port._serial.interCharTimeout)
-        self.serial_port._serial.interCharTimeout = float(kwargs['interChartimeout'])
-        _log.debug("interCharTimeout %s", self.serial_port._serial.interCharTimeout)
+        # does not get used by twisted, I suspect it is using select on the FD
+        # self.serial_port._serial.interCharTimeout = float(kwargs['interChartimeout'])
 
     @property
     def is_attached(self):
@@ -66,8 +68,13 @@ class ConsoleHandler(Protocol):
             self.listener.stopListening()
 
     def flush_log(self):
+#        self.portlog.info(self.logdata)
+
         if self.logtype == ConsoleHandler.LOG_ASCII:
-            self.portlog.info("".join( [c if ord(c) >= 32 else hex(ord(c)) for c in self.logdata ] ))
+            for s in self.logdata.split( "\n"):
+                s = s.replace("\r", "")
+                if len(s) > 0:
+                    self.portlog.info( ascii_escape(s) )
         elif self.logtype == ConsoleHandler.LOG_HEX:
             hexstr = " ".join( [binascii.hexlify(c) for c in self.logdata ] )
             self.portlog.info(hexstr)
