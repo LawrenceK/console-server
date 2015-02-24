@@ -1,3 +1,4 @@
+
 Things still to be done.
 ------------------------
 
@@ -10,8 +11,6 @@ Change default location of config file
 Configure ssh ports through cli.
 Add Enabled flag to config
 Add 32 port entries to default config file - ttyUSB0 - ttyUSB31
-Configure logfile
-default logrotate file
 Copy default config file on install to /etc/consoleserver
 Configure monitor path and mask through CLI.
 add reload port to apply changes to config

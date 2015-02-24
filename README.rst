@@ -129,6 +129,9 @@ to get it running as a daemon. sudo consoleserver will run it in a terminal wind
 
 File locations
 --------------
+The system looks for config files in i) current directory, ~/.consoleserver (Posix) and
+/etc/consoleserver. If not found it will use the defaults in the python source directory.
+
 
 Config File
 =============
@@ -137,17 +140,19 @@ The system will create a default config file in /etc/consoleserver called config
 to access serial ports ttyUSB0..ttyUSB31. The default management port is 8022 and the 
 default serial ports are on 8023..8054. 
 
+If the sshport is not given for a port then no ssh listener is started for that serial port.
+
 LogFiles
 ===========
 
-The default entries are setup to create logfiles in /var/log/consoleserver. If installed
-with pip install consoleserver then a logrotate file will be installed to rotate these files daily.
+A change with V1.0 was to use python logging to handle all logging, there is now a configuration
+file (logging.ini) which is passed to fileconfig to setup the logging streams. The logging 
+handler names are generated from the the numeric suffix of the port names, i.e. port.11 for ttyUSB11.
 
 Others
 ===========
 
     /etc/init.d/consoleserver
-    /etc/logrotate.d/consoleserver
     /etc/udev/rules.d/99-usb-blacklist.rules
 
 You will have to make /etc/init.d/consoleserver executable if you wish to run this as a daemon.
@@ -164,4 +169,5 @@ Licence
 
 The code is licenced using the GPL, see included LICENCE file. At present any other licence is subject to negotiation.
 
-\(C\) Copyright L P Klyne 2013
+\(C\) Copyright L P Klyne 2013-2015
+
