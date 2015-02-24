@@ -102,7 +102,7 @@ class TSFactory(factory.SSHFactory):
     def getRSAKeys(self):
         if not (os.path.exists(self.publickey_file) and os.path.exists(self.privatekey_file)):
             # generate a RSA keypair
-            _log.debug("Generating RSA keypair")
+            _log.info("Generating RSA keypair")
             from Crypto.PublicKey import RSA
             KEY_LENGTH = 1024
             rsaKey = RSA.generate(KEY_LENGTH, randbytes.secureRandom)
