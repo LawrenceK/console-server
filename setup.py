@@ -12,7 +12,7 @@ data_files = [
 
 setup(
     name="ConsoleServer",
-    version="1.0",
+    version="1.0.1",
     description="This is a logging console server that can also be accessed over ssh.",
     long_description=file('README.rst').read(),
     packages=['consoleserver', ],
