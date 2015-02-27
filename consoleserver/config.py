@@ -5,8 +5,8 @@
 """
 import logging
 _log = logging.getLogger(__name__)
-#import os
-#import os.path
+import os
+import os.path
 
 from configobj import ConfigObj
 from validate import Validator
@@ -100,3 +100,22 @@ def get_names_from_port(port_nr):
 def get_port_names():
     """return a list of all port names in the configuration file"""
     return [k for k in config.keys() if k != "GLOBAL"]
+
+def find_file( basename, default = False ):
+    fname = os.path.abspath(basename)   # current directory
+    if os.path.exists(fname):
+        return fname
+    if os.name == "posix":
+        fname = os.path.abspath(os.path.expanduser(os.path.join("~", ".consoleserver", basename)))   # users home directory
+        if os.path.exists(fname):
+            return fname
+        fname = os.path.join("etc", "consoleserver", basename)   # system directory
+        if os.path.exists(fname):
+            return fname
+    fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), basename)   # python directory
+    if os.path.exists(fname):
+        return fname
+    if default:
+        return os.path.abspath(basename)
+    return None
+
