@@ -20,6 +20,7 @@ from twisted.python import randbytes
 
 from ssh_protocol import TSProtocol
 
+import config
 
 class TSAvatar(avatar.ConchUser):
 
@@ -94,12 +95,14 @@ class TSFactory(factory.SSHFactory):
         'ssh-userauth': userauth.SSHUserAuthServer,
         'ssh-connection': connection.SSHConnection
     }
-    publickey_file = '/etc/consoleserver/public.key'
-    privatekey_file = '/etc/consoleserver/private.key'
+    publickey_file = 'public.key'
+    privatekey_file = 'private.key'
     publicKeys = {}
     privateKeys = {}
 
     def getRSAKeys(self):
+        TSFactory.publickey_file = config.find_file( TSFactory.publickey_file, default = True )
+        TSFactory.privatekey_file = config.find_file( TSFactory.privatekey_file, default = True )
         if not (os.path.exists(self.publickey_file) and os.path.exists(self.privatekey_file)):
             # generate a RSA keypair
             _log.info("Generating RSA keypair")
