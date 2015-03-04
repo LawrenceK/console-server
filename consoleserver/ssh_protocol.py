@@ -32,7 +32,6 @@ cs_help = [
     "rtscts <portname> <0,1>",
     "xonxoff <portname> <0,1>",
     "sshport <portname> <nnnn>",
-    "logfile <portname> <logfile>",
     "portmonitor <location>",
     "timeout <portname> <seconds>",
 ]
@@ -53,7 +52,6 @@ port_cmds = [
     "xonxoff",
     "sshport",
     "timeout",
-    "logfile",
     "reload",
 ]
 

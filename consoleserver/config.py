@@ -103,15 +103,19 @@ def get_port_names():
 
 def find_file( basename, default = False ):
     fname = os.path.abspath(basename)   # current directory
+    _log.info("look for %s in %s", basename, fname)
     if os.path.exists(fname):
         return fname
     if os.name == "posix":
         fname = os.path.abspath(os.path.expanduser(os.path.join("~", ".consoleserver", basename)))   # users home directory
+        _log.info("look for %s in %s", basename, fname)
         if os.path.exists(fname):
             return fname
-        fname = os.path.join("etc", "consoleserver", basename)   # system directory
+        _log.info("look for %s in %s", basename, fname)
+        fname = os.path.join("/etc", "consoleserver", basename)   # system directory
         if os.path.exists(fname):
             return fname
+    _log.info("look for %s in %s", basename, fname)
     fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), basename)   # python directory
     if os.path.exists(fname):
         return fname

@@ -6,13 +6,13 @@ setup_base = os.path.dirname(os.path.abspath(__file__))
 
 data_files = [
     ('/etc/init.d', [os.path.join(setup_base, 'etc/init.d/consoleserver'), ]),
-#    ('/etc/logrotate.d', [os.path.join(setup_base, 'etc/logrotate.d/consoleserver'), ]),
+    ('/etc/logrotate.d', [os.path.join(setup_base, 'etc/logrotate.d/consoleserver'), ]),
     ('/etc/udev/rules.d', [os.path.join(setup_base, 'etc/udev/rules.d/99-usb-blacklist.rules'), ])
 ]
 
 setup(
     name="ConsoleServer",
-    version="1.0.1",
+    version="1.0.2",
     description="This is a logging console server that can also be accessed over ssh.",
     long_description=file('README.rst').read(),
     packages=['consoleserver', ],

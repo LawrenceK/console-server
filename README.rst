@@ -14,6 +14,8 @@ solution can be acheived using a raspberry pi and readily available usb to seria
 e.g. this 16 port one for under £200
 http://www.easysync-ltd.com/product/636/usb2-h-1016-m.html
 
+A write up about this can be found on http://www.klyne.org/console-server.html an update is to follow.
+
 Authentication
 --------------
 Version 0.2 and later uses unix password file and users authorised keys for 
@@ -114,11 +116,11 @@ sshport <portname> <nnnn>",
     Change ssh port that directly connects to the serial port.
 
 logfile <portname> <logfile>",
-    Change The name of the log file for this port. logfile can be blank in which case the port is not logged. If the
-    logfile is not an absolute path then it is relative to /var/log/consoleserver, the extension .log i forced.
+    NOTE loggign has been rewored and to chnage logfiles names and locations you will need to edit
+    the logfile.ini and then restart the consoleserver, this allows the easier management of logfiles.
 
 portmonitor <location>
-    Change the directory to monitor for new serial ports, the port (device) names must alredy exist in the config for
+    Change the directory to monitor for new serial ports, the port (device) names must already exist in the config for
     the consoleserver to open them as soon as they are plugged in.
 
 Installation
