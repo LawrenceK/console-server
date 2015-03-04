@@ -1,5 +1,14 @@
 #!/bin/bash
 
+### BEGIN INIT INFO
+# Provides:             consoleserver
+# Required-Start:       $remote_fs $syslog
+# Required-Stop:        $remote_fs $syslog
+# Default-Start:        2 3 4 5
+# Default-Stop:         0 1 6
+# Short-Description:    consoleserver and serial logger
+### END INIT INFO
+
 DAEMON="/usr/local/bin/consoleserver"
 ARGS="-c /etc/consoleserver/config.ini"
 PIDFILE="/var/run/consoleserver.pid"
